@@ -40,12 +40,13 @@ public class MouseProcessor implements MouseListener {
                 System.out.println(e.getX() + ", " + e.getY());
 
                 try {
-                    wp.paintPixel(e.getX(), e.getY());
+                    wp.setPixel(e.getX(), e.getY());
                 } catch (InterruptedException ex) {
                     System.out.println(ex.getCause());
                 }
             }
         });
+        thread.setPriority(thread.MAX_PRIORITY);
         thread.start();
     }
 

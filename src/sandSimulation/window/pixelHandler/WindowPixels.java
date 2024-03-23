@@ -6,48 +6,63 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Insets;
+import java.awt.Paint;
 
 import javax.swing.JFrame;
 
 public class WindowPixels {
-    final private boolean [][] pixels;
+    final private boolean [][] px;
+    final private boolean [][] nGen;
     final private JFrame frame;
     private Dimension d;
+
+    private Graphics g;
 
     public WindowPixels (SandWindow f) {
         this.frame = f;
 
         d = frame.getSize();
-        pixels = new boolean[d.width][d.height];
+        px = new boolean[d.width][d.height];
+        nGen = px;
+
+        g = frame.getGraphics();
     }
 
-    public void paintPixel (int mouseX, int mouseY) throws InterruptedException{
-        Graphics g = frame.getGraphics();
-        g.setColor(Color.WHITE);
-
-        g.drawLine(mouseX, mouseY, mouseX, mouseY);
-        pixels[mouseX][mouseY] = true;
-
-        update(mouseX, mouseY, g);
+    public void setPixel (int mouseX, int mouseY) throws InterruptedException{
+        px[mouseX][mouseY] = true;
+        generateNextGen(mouseX, mouseY);
     }
 
-    public void update (int mouseX, int mouseY, Graphics g) throws InterruptedException {
+    public void generateNextGen (int mouseX, int mouseY) throws InterruptedException {
         Insets insets = frame.getInsets();
-        int limit = d.height - insets.bottom - 1;
-
-        while (mouseY < limit) {
-            if (pixels[mouseX][mouseY] && !pixels[mouseX][mouseY + 1]) {
-                pixels[mouseX][mouseY] = false;
-                pixels[mouseX][mouseY + 1] = true;
-
-                g.setColor(Color.BLACK);
-                g.drawLine(mouseX, mouseY, mouseX, mouseY);
-
-                g.setColor(Color.WHITE);
-                g.drawLine(mouseX, mouseY + 1, mouseX, mouseY + 1);
+        for (int x = 0; x < px.length; x++) {
+            for (int y = 0; y < px[x].length - insets.bottom; y++) {
+                if (px[x][y] && !px[x][y + 1]) {
+                    px[x][y] = false;
+                    px[x][y + 1] = true;
+                    paintPixel(x, y);
+                    Thread.sleep(1);
+                } else if (px[x][y] && !px[x - 1][y + 1]) {
+                    px[x][y] = false;
+                    px[x - 1][y + 1] = true;
+                    paintPixel(x, y);
+                    Thread.sleep(1);
+                } else if (px[x][y] && !px[x + 1][y + 1]) {
+                    px[x][y] = false;
+                    px[x + 1][y + 1] = true;
+                    paintPixel(x, y);
+                    Thread.sleep(1);
+                }
             }
-            mouseY++;
-            Thread.sleep(1);
         }
+    }
+
+    private void paintPixel(int x, int y) {
+        Graphics g = frame.getGraphics();
+        g.setColor(Color.BLACK);
+        g.drawLine(x, y - 1, x, y - 1);
+
+        g.setColor(Color.WHITE);
+        g.drawLine(x, y, x, y);
     }
 }
