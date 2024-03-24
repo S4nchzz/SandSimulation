@@ -3,23 +3,17 @@ package sandSimulation.window.mouseProcessing;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
-import javax.swing.JFrame;
-
 import sandSimulation.window.SandWindow;
 import sandSimulation.window.pixelHandler.WindowPixels;
 
 import sandSimulation.window.elements.Element;
 
 public class MouseProcessor implements MouseListener {
-    private final JFrame frame;
     private final WindowPixels wp;
-    private Thread t;
     private final int size;
 
-
-    public MouseProcessor(SandWindow f, Element e, int size) {
-        this.frame = f;
-        this.wp = new WindowPixels(f, e);
+    public MouseProcessor(SandWindow f, Element e, int size, boolean [][] px) {
+        this.wp = new WindowPixels(f, e, px);
         this.size = size;
     }
 
@@ -32,16 +26,10 @@ public class MouseProcessor implements MouseListener {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        t = new Thread (() -> {
+        new Thread (() -> {
             System.out.println(e.getX() + ", " + e.getY());
-            try {
-                wp.setPixel(e.getX(), e.getY(), size);
-            } catch (InterruptedException ex) {
-                System.out.println(ex.getCause());
-            }
-        });
-
-        t.start();
+            wp.setPixel(e.getX(), e.getY(), size);
+        }).start();
     }
 
     @Override

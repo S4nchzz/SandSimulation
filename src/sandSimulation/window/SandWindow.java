@@ -4,15 +4,18 @@ import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import sandSimulation.window.elements.Element;
-
+import sandSimulation.window.elements.Sand;
 import sandSimulation.window.mouseProcessing.MouseProcessor;
 
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.util.Scanner;
 
 public class SandWindow extends JFrame {
-    public SandWindow(Element e) {
+    private final boolean[][] px;
+
+    public SandWindow() {
         setTitle("Sand Simulation");
         ImageIcon icon = new ImageIcon("icon.png");
         Image image = icon.getImage();
@@ -27,7 +30,14 @@ public class SandWindow extends JFrame {
 
         Scanner sc = new Scanner(System.in);
         System.out.print("Tamaño del puntero min 5 max 50: ");
-        addMouseListener(new MouseProcessor(this, e, sc.nextInt()));
+        int mouseSize = sc.nextInt();
+
+        Dimension d = this.getSize();
+        px = new boolean[d.width][d.height]; // Array de pixels
+
+        Element e = new Sand(this, px); //Elemento de arena
+
+        addMouseListener(new MouseProcessor(this, e, mouseSize, px));
         sc.close();
     }
 }
