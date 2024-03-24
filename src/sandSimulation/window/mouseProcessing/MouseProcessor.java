@@ -8,21 +8,19 @@ import javax.swing.JFrame;
 import sandSimulation.window.SandWindow;
 import sandSimulation.window.pixelHandler.WindowPixels;
 
+import sandSimulation.window.elements.Element;
+
 public class MouseProcessor implements MouseListener {
-    private JFrame frame;
-    private WindowPixels wp;
+    private final JFrame frame;
+    private final WindowPixels wp;
+    private Thread t;
+    private final int size;
 
-    private boolean isHolded;
 
-    public MouseProcessor(SandWindow f) {
+    public MouseProcessor(SandWindow f, Element e, int size) {
         this.frame = f;
-        wp = new WindowPixels(f);
-        isHolded = true;
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-
+        this.wp = new WindowPixels(f, e);
+        this.size = size;
     }
 
     /**
@@ -34,20 +32,21 @@ public class MouseProcessor implements MouseListener {
      */
     @Override
     public void mousePressed(MouseEvent e) {
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                System.out.println(e.getX() + ", " + e.getY());
-
-                try {
-                    wp.setPixel(e.getX(), e.getY());
-                } catch (InterruptedException ex) {
-                    System.out.println(ex.getCause());
-                }
+        t = new Thread (() -> {
+            System.out.println(e.getX() + ", " + e.getY());
+            try {
+                wp.setPixel(e.getX(), e.getY(), size);
+            } catch (InterruptedException ex) {
+                System.out.println(ex.getCause());
             }
         });
-        thread.setPriority(thread.MAX_PRIORITY);
-        thread.start();
+
+        t.start();
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
     }
 
     @Override
