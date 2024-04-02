@@ -22,7 +22,7 @@ public class SandWindow extends JFrame {
         
         setIconImage(image);
         setVisible(true);
-        setSize(1000, 1000);
+        setSize(400, 400);
         getContentPane().setBackground(Color.black);
         setLocationRelativeTo(null);
         setResizable(false);
